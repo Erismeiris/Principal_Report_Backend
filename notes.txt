@@ -1,0 +1,4 @@
+
+
+Ejemplo de una consulta con left join
+select * from school S left join district D on S.id_district=D.id_district
