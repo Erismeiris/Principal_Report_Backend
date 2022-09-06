@@ -1,6 +1,7 @@
 const School = require('../models/school.model');
 const {sequelize,dbConnectMySQL} = require('../config/mysql');
 const { response } = require('express');
+const jwt = require('jsonwebtoken');
 
 const getSchool = async (req, res) => {
     const sql = 'SELECT * FROM school S LEFT JOIN district D ON S.id_district = D.id_district';
@@ -52,38 +53,30 @@ const deleteSchool = (req, res) => {
 
 
 const schoolLogin = async (req, res=response) => {
-    const {school_name, password} = req.body;
-    const sql = `SELECT * FROM school WHERE school_name = '${school_name}' AND password = '${password}'`;
-    
-    try {
-        if(!school_name || !password) {
-            return res.status(400).json({
-                message: 'Please enter all fields'
+   const { school_name, password } = req.body;
+   const sql = `SELECT * FROM school WHERE school_name = '${school_name}'`;
+   sequelize.query(sql, { type: sequelize.QueryTypes.SELECT })
+    .then(school => {
+        if(school.length > 0){
+            if(school[0].password === password){
+                const uid = {id_school:school[0].id_school, principal_name:school[0].principal_name, school_name:school[0].school_name}                
+                const token = jwt.sign({ uid }, process.env.JWT_SECRET, { expiresIn: '24h' });
+                res.json({
+                    ok:true,
+                    school,
+                    token:token
+                });
+             }else{
+                res.status(400).json({
+                    msg: 'Password is incorrect'
+                });
+            }
+        }else{
+            res.status(400).json({
+                msg: 'School is incorrect'
             });
         }
-        const school = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        if(school.length === 0) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Invalid credentials'
-            });
-        }
-        return res.status(200).json({
-            msg: 'Login successful',
-            ok: true,
-            school
-        });
-        
-    } catch (error) {
-        return res.status(500).json({
-            msg: 'Something went wrong'
-        });
-
-        
-    }
-            
-      
-          //catch error
+    }   )   .catch(err => { console.log(err) });        //catch error
 }
 
 

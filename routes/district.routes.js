@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const{check} = require('express-validator');
 const {getDistrict, createDistrict, updateDistrict, deleteDistrict, getDistrictById} = require('../controllers/district.controller');
-const { validarJWT } = require('../../Contenedor/contenedor-backend-server/middlewares/validar-jwt');
+const { validateJWT } = require('../middlewares/validate.jwt');
 
 
 

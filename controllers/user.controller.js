@@ -23,7 +23,7 @@ const login = async (req, res = response) => {
     .then(user => {
         if(user.length > 0){
             if(bcrypt.compareSync(password, user[0].password)){
-                const uid = {user:user[0]._id, rol:user[0].rol};                
+                const uid = {_id:user[0]._id, rol:user[0].rol, user_name:user[0].user_name, grades:user[0].grades};                
                 const token = jwt.sign({ uid }, process.env.JWT_SECRET, { expiresIn: '24h' });
                 res.json({
                     ok:true,
@@ -72,7 +72,8 @@ const renewToken = async(req, res = response)=>{
 
     res.json({
         ok:true,
-        token:token
+        token:token,
+        uid:uid
     });
 }
 

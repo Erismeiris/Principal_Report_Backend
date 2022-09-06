@@ -11,6 +11,15 @@ const getReport = async (req, res = response) => {
     }   )   .catch(err => { console.log(err) });        //catch error
 }
 
+const getReportBySchoolId = async (req, res=response) => {
+    const {school_id} = req.params;
+    const sql = 'SELECT * FROM report WHERE school_id = ? Order By report_month DESC';
+    sequelize.query(sql, { replacements: [school_id], type: sequelize.QueryTypes.SELECT })
+    .then(report => {
+        res.json(report);
+    }   )   .catch(err => { console.log(err) });        //catch error
+}
+
 
 const getReportById = async (req, res=response) => {
     const id_report = req.params.id_report;
@@ -31,8 +40,8 @@ const getReportById = async (req, res=response) => {
 
 
 const createReport = async (req, res=response) => {
-    const sql = 'INSERT INTO report (school_id, report_month) VALUES (?, ?)';	//sql query
-    const values = [req.body.school_id, req.body.report_month];	//values to insert  
+    const sql = 'INSERT INTO report (school_id, report_month, report_name) VALUES (?, ?, ?)';	//sql query
+    const values = [req.body.school_id, req.body.report_month, req.body.report_name];	//values to insert  
     sequelize.query(sql, { replacements: values })	//execute query with values
     .then(report => {
         res.json(report);
@@ -66,6 +75,7 @@ module.exports = {
     getReportById,
     createReport,
     updateReport,
-    deleteReport
+    deleteReport,
+    getReportBySchoolId
 }
 

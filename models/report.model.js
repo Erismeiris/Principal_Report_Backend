@@ -12,6 +12,10 @@ const Report = sequelize.define('report', {
         type: DataTypes.INTEGER,
         allowNull: false,     //not null
     },
+    report_name: {
+        type: DataTypes.STRING,
+        allowNull: false,    //not null
+    },
     report_month: {
         type: DataTypes.DATE,
         allowNull: false,     //not null
